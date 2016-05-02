@@ -559,6 +559,10 @@ class ArticlesGenerator(CachingGenerator):
         self.drafts, self.drafts_translations = \
             process_translations(all_drafts)
 
+        self.dates = list(self.articles)
+        self.dates.sort(key=attrgetter('date'),
+                        reverse=self.context['NEWEST_FIRST_ARCHIVES'])
+
         signals.article_generator_pretaxonomy.send(self)
 
         for article in self.articles:
@@ -571,9 +575,11 @@ class ArticlesGenerator(CachingGenerator):
             for author in getattr(article, 'authors', []):
                 self.authors[author].append(article)
 
-        self.dates = list(self.articles)
-        self.dates.sort(key=attrgetter('date'),
-                        reverse=self.context['NEWEST_FIRST_ARCHIVES'])
+        # add previous and next article reference to each article
+        length = len(self.articles)
+        for i in range(length):
+            self.articles[i].next = self.articles[i + 1] if i+1 < length else None
+            self.articles[i].previous = self.articles[i - 1] if i-1 >= 0 else None
 
         # and generate the output :)
 

@@ -14,6 +14,13 @@
       {% include 'article_infos.html' %}
       {{ article.content }}
     </div><!-- /.entry-content -->
+    {% if article.previous %}
+    <a href="{{ SITEURL }}/{{ article.previous.url }}">Previous article: {{ article.previous.title }}</a>
+    {% endif %}
+    <br>
+    {% if article.next %}
+    <a href="{{ SITEURL }}/{{ article.next.url }}">Next article: {{ article.next.title }}</a>
+    {% endif %}
     {% if DISQUS_SITENAME and SITEURL and article.status != "draft" %}
     <div class="comments">
       <h2>Comments !</h2>
